@@ -1,0 +1,14 @@
+# syntax=docker/dockerfile:1
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS builder
+WORKDIR /app
+COPY . .
+RUN dotnet build -c Release -o published
+
+
+FROM mcr.microsoft.com/dotnet/aspnet:5.0
+WORKDIR /app
+COPY --from=builder /app/published /app/.
+COPY --from=builder /app/WebApp001/wwwroot /app/wwwroot
+# RUN dotnet dev-certs https
+# CMD dotnet WebApp001.dll --urls "http://+:80;https://+:443"
+CMD dotnet WebApp001.dll --urls "http://+:80"
